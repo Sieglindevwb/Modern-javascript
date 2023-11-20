@@ -1,0 +1,113 @@
+/* styles.css */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  background-color: white;
+}
+
+h1 {
+  color: rgb(2, 211, 211);
+  margin-top: 40px;
+}
+
+#app-container {
+  text-align: center;
+  }
+  
+button, input {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px; /* Add margin to separate elements */
+  }
+
+button:hover {
+  box-shadow: 4px -4px rgb(2, 211, 211);
+  background-color: rgb(78, 78, 78);
+  color: #ffffff;
+  border: rgb(78, 78, 78);
+  }
+
+#city {
+  font-size: 24px;
+  margin-bottom: 10px;
+  }
+  
+#temperature {
+  font-size: 36px;
+  margin-bottom: 10px;
+  }
+  
+#description {
+  font-size: 18px;
+  margin-bottom: 10px;
+  }
+  
+#daily-forecast {
+  display:none;
+  flex-direction: row; /* Change to column to stack items vertically */
+  align-items: center; /* Optional: Center items horizontally */
+  justify-content: center;
+  padding: 20px;
+  margin-top: 20px;
+}
+  
+.daily-forecast-item {
+  display:none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(222, 222, 223);
+  box-shadow: 8px -10px rgb(2, 211, 211);
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px;
+  width: 150px;
+  height: 40vh; /* Set a fixed height for the items */
+  overflow: auto; /* Add overflow for cases where content exceeds the height */
+  }
+
+.daily-forecast-item p {
+  margin: 5px 0; /* Add margin between paragraphs */
+  }
+
+.day-forecast {
+  text-align: center;
+  flex: 1;
+  padding: 10px;
+  }
+  
+  #weather-icon {
+  width: 20vw; 
+}
+
+.daily-weather-icon {
+  width: 3vw;
+  padding: 20px
+}
+  
+@media (max-width: 700px) {
+  #weather-icon {
+    width: 50vw; /* Adjust icon size for smaller screens */
+  }
+
+  #daily-forecast {
+    flex-direction: column; /* Stack forecast items in a column on small screens */
+  }
+
+  .day-forecast {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 0;
+  }
+
+  .daily-forecast-item {
+    height: 40vh;
+  }
+
+  .daily-weather-icon {
+    width: 6vw;
+    padding: 10px
+  }
+}
