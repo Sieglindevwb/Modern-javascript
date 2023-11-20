@@ -1,12 +1,52 @@
 
 const buttonSubmitCity = document.querySelector(".submitCityName");
 const inputField = document.querySelector('#cityName');
+const cityNameElement = document.querySelector('#city');
+// Select the HTML elements where you want to display weather information
+const temperatureElement = document.querySelector('#temperature');
+const descriptionElement = document.querySelector('#description');
+const dailyForecastElement = document.querySelector('#daily-forecast');
+const iconElement = document.querySelector('#weather-icon');
+
+const API_URL_GEOCODING = 'https://geocoding-api.open-meteo.com/v1/search?count=10&language=en&format=json';
+const API_URL_WEATHER = 'https://api.open-meteo.com/v1/forecast?current=temperature_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,rain,showers,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe%2FLondon&forecast_days=3';
+
+// Map weather codes to detailed descriptions
+const descriptions = {
+    0: 'Clear sky',
+    1: 'Mainly clear',
+    2: 'Partly cloudy',
+    3: 'Overcast',
+    48: 'Fog',
+    45: 'Depositing rime fog',
+    51: 'Light drizzle',
+    53: 'Moderate drizzle',
+    55: 'Dense drizzle',
+    56: 'Light freezing drizzle',
+    57: 'Dense freezing drizzle',
+    61: 'Light rain shower',
+    63: 'Rain shower',
+    65: 'Heavy rain shower',
+    66: 'Light freezing rain',
+    67: 'heavy freezing rain',
+    71: 'Snow fall',
+    73: 'Moderate snow fall',
+    75: 'Heavy snow fall',
+    77: 'Snow grains',
+    80: 'Rain showers',
+    81: 'Medium rain showers',
+    82: 'Voilent rain showers',
+    85: 'Snow showers',
+    86: 'Heavy snow showers',
+    95: 'Thunderstorm',
+    96: 'Thunderstorm with hail',
+    99: 'Thunderstorm with heavy hail'
+};
 
 async function getGeoData(cityName){
     try {
-        const response = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + cityName + '&count=10&language=en&format=json');
+        const response = await fetch(`${API_URL_GEOCODING}&name=${cityName}`);
         const data = await response.json();
-        const cityNameElement = document.querySelector('#city');
         cityNameElement.textContent = data.results[0].name + ', ' + data.results[0].country;
         console.log(data);
         console.log(data.results[0].country);
@@ -20,7 +60,7 @@ async function getGeoData(cityName){
 
 async function getWeatherData(location) {
     try {
-        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude='+ location.latitude +'&longitude='+ location.longitude + '&current=temperature_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,rain,showers,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe%2FLondon&forecast_days=3');
+        const response = await fetch(`${API_URL_WEATHER}&latitude=${location.latitude}&longitude=${location.longitude}`);
         const data = await response.json();
         console.log('Weather Data Response:', data);
         return data;
@@ -32,14 +72,9 @@ async function getWeatherData(location) {
 }
 
 function updateWeatherDisplay(weather) {
+
     const temperature = weather.current.temperature_2m;
     const description = getWeatherDescription(weather.current.weather_code);
-  
-    // Select the HTML elements where you want to display weather information
-    const temperatureElement = document.querySelector('#temperature');
-    const descriptionElement = document.querySelector('#description');
-    const dailyForecastElement = document.querySelector('#daily-forecast');
-    const iconElement = document.querySelector('#weather-icon');
   
     // Update the content of the selected elements
     temperatureElement.textContent = temperature + '°C';
@@ -98,38 +133,6 @@ function updateWeatherDisplay(weather) {
         dailyForecastElement.appendChild(dayElement);
     });
 }
-
-// Map weather codes to detailed descriptions
-const descriptions = {
-    0: 'Clear sky',
-    1: 'Mainly clear',
-    2: 'Partly cloudy',
-    3: 'Overcast',
-    48: 'Fog',
-    45: 'Depositing rime fog',
-    51: 'Light drizzle',
-    53: 'Moderate drizzle',
-    55: 'Dense drizzle',
-    56: 'Light freezing drizzle',
-    57: 'Dense freezing drizzle',
-    61: 'Light rain shower',
-    63: 'Rain shower',
-    65: 'Heavy rain shower',
-    66: 'Light freezing rain',
-    67: 'heavy freezing rain',
-    71: 'Snow fall',
-    73: 'Moderate snow fall',
-    75: 'Heavy snow fall',
-    77: 'Snow grains',
-    80: 'Rain showers',
-    81: 'Medium rain showers',
-    82: 'Voilent rain showers',
-    85: 'Snow showers',
-    86: 'Heavy snow showers',
-    95: 'Thunderstorm',
-    96: 'Thunderstorm with hail',
-    99: 'Thunderstorm with heavy hail'
-};
 
 function getWeatherDescription(weatherCode) {
 
