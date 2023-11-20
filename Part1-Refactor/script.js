@@ -1,5 +1,5 @@
 
-const button = document.querySelector(".submitCityName");
+const buttonSubmitCity = document.querySelector(".submitCityName");
 const inputField = document.querySelector('#cityName');
 
 async function getGeoData(cityName){
@@ -225,7 +225,7 @@ inputField.addEventListener('keyup', (event) => {
         startWeatherApp()
     }
 })
-button.addEventListener('click', (event) => {
+buttonSubmitCity.addEventListener('click', (event) => {
     event.preventDefault();
     startWeatherApp();
 })
