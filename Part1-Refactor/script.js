@@ -6,9 +6,12 @@ const descriptionElement = document.querySelector('#description');
 const dailyForecastElement = document.querySelector('#daily-forecast');
 const iconElement = document.querySelector('#weather-icon');
 
+const API_URL = 'https://geocoding-api.open-meteo.com/v1/search';
+const WEATHER_API_URL = 'https://api.open-meteo.com/v1/forecast';
+
 async function getGeoData(cityName){
     try {
-        const response = await fetch('https://geocoding-api.open-meteo.com/v1/search?name=' + cityName + '&count=10&language=en&format=json');
+        const response = await fetch(`${API_URL}?name=${cityName}&count=10&language=en&format=json`);
         const data = await response.json();
         cityNameElement.textContent = data.results[0].name + ', ' + data.results[0].country;
         console.log(data);
@@ -23,7 +26,7 @@ async function getGeoData(cityName){
 
 async function getWeatherData(location) {
     try {
-        const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude='+ location.latitude +'&longitude='+ location.longitude + '&current=temperature_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,rain,showers,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe%2FLondon&forecast_days=3');
+        const response = await fetch(`${WEATHER_API_URL}?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weather_code&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,rain,showers,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Europe%2FLondon&forecast_days=3`);
         const data = await response.json();
         console.log('Weather Data Response:', data);
         return data;
