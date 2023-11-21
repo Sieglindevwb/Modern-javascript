@@ -14,8 +14,6 @@ async function getGeoData(cityName){
         const response = await fetch(`${API_URL}?name=${cityName}&count=10&language=en&format=json`);
         const data = await response.json();
         cityNameElement.textContent = data.results[0].name + ', ' + data.results[0].country;
-        console.log(data);
-        console.log(data.results[0].country);
         return data.results[0];
     }
     catch (error){
@@ -38,65 +36,61 @@ async function getWeatherData(location) {
 }
 
 function updateWeatherDisplay(weather) {
+    const currentWeather = weather.current;
     const temperature = weather.current.temperature_2m;
     const description = getWeatherDescription(weather.current.weather_code);
   
     // Update the content of the selected elements
     temperatureElement.textContent = temperature + '°C';
     descriptionElement.textContent = description;
+    iconElement.src = getWeatherIcon(currentWeather.weather_code);
 
-    // Get the weather icon URL
-    const currentWeatherIcon = getWeatherIcon(weather.current.weather_code);
-    iconElement.src = currentWeatherIcon;
-  
-    // Update the daily forecast information
-    const dailyForecastData = weather.daily;
-  
+    updateDailyForecast(weather.daily);
+
+}
+
+function updateDailyForecast(dailyForecastData) {
     // Clear existing content in the daily forecast element
     dailyForecastElement.innerHTML = '';
-  
-    // Iterate over each day in the forecast data
-    dailyForecastData.time.forEach((day, index) => {
+     // Iterate over each day in the forecast data
+     dailyForecastData.time.forEach((day, index) => {
         const date = new Date(day);
-        // Inside the loop where you create daily forecast items
-        const dayElement = document.createElement('section');
-        dayElement.classList.add('daily-forecast-item');
-
-        // Create separate paragraphs for each piece of information
-        const dateParagraph = document.createElement('p');
-        dateParagraph.textContent = date.toDateString();
-        dateParagraph.classList.add('date');
-
-        const maxTemperatureParagraph = document.createElement('p');
-        maxTemperatureParagraph.textContent = 'Max ' + dailyForecastData.temperature_2m_max[index] + '°C';
-        maxTemperatureParagraph.classList.add('max-temperature');
-
-        const minTemperatureParagraph = document.createElement('p');
-        minTemperatureParagraph.textContent = 'Min ' + dailyForecastData.temperature_2m_min[index] + '°C';
-        minTemperatureParagraph.classList.add('min-temperature');
-
-        const precipitationParagraph = document.createElement('p');
-        precipitationParagraph.textContent = 'Precipitation ' + dailyForecastData.precipitation_sum[index] + 'mm';
-        precipitationParagraph.classList.add('precipitation');
-
-        // Create an img element for the daily forecast icon
-        const iconElement = document.createElement('img');
-        iconElement.classList.add('daily-weather-icon');
-
-        // Get the weather icon URL for the daily forecast
-        const dailyForecastIcon = getWeatherIcon(dailyForecastData.weather_code[index], false);
-        iconElement.src = dailyForecastIcon;
-
-        // Append paragraphs to the daily forecast item
-        dayElement.appendChild(dateParagraph);
-        dayElement.appendChild(iconElement);
-        dayElement.appendChild(maxTemperatureParagraph);
-        dayElement.appendChild(minTemperatureParagraph);
-        dayElement.appendChild(precipitationParagraph);
-
-        // Append the daily forecast item to the daily forecast container
+        const dayElement = createDailyForecastItem(date, dailyForecastData, index);
         dailyForecastElement.appendChild(dayElement);
-    });
+     });
+}
+  
+function createDailyForecastItem(date, dailyForecastData, index) {
+    const dayElement = document.createElement('section');
+    dayElement.classList.add('daily-forecast-item');
+
+    const dateParagraph = createParagraph(date.toDateString(), 'date');
+    const maxTemperatureParagraph = createParagraph(`Max ${dailyForecastData.temperature_2m_max[index]}°C`, 'max-temperature');
+    const minTemperatureParagraph = createParagraph(`Min ${dailyForecastData.temperature_2m_min[index]}°C`, 'min-temperature');
+    const precipitationParagraph = createParagraph(`Precipitation ${dailyForecastData.precipitation_sum[index]}mm`, 'precipitation');
+    const iconElement = createIconElement('daily-weather-icon', dailyForecastData.weather_code[index], false);
+
+    dayElement.appendChild(dateParagraph);
+    dayElement.appendChild(iconElement);
+    dayElement.appendChild(maxTemperatureParagraph);
+    dayElement.appendChild(minTemperatureParagraph);
+    dayElement.appendChild(precipitationParagraph);
+
+    return dayElement;
+}
+
+function createParagraph(text, className) {
+    const paragraph = document.createElement('p');
+    paragraph.textContent = text;
+    paragraph.classList.add(className);
+    return paragraph;
+}
+
+function createIconElement(className, weatherCode, isCurrentWeather = true) {
+    const iconElement = document.createElement('img');
+    iconElement.classList.add(className);
+    iconElement.src = getWeatherIcon(weatherCode, isCurrentWeather);
+    return iconElement;
 }
 
 // Map weather codes to detailed descriptions
